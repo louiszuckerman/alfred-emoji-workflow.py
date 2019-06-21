@@ -2,6 +2,8 @@
 
 This simple workflow lets you search emoji codes and their symbols.
 
+I ported this from ruby to python from [my fork](https://github.com/louiszuckerman/alfred-emoji-workflow) of the original [alfred-emoji-workflow](https://github.com/carlosgaldino/alfred-emoji-workflow).  Many thanks to [carlosgaldino](https://github.com/carlosgaldino) for his original work on this Alfred workflow.
+
 ## Copy the emoji code to use on Campfire, GitHub, etc.
 Usage: `emoji [query]`
 
