@@ -19,6 +19,10 @@ Copyright 2013 Carlos Galdino
 generate.rb & rename.rb
 Copyright 2015 Louis Zuckerman
 
+port from ruby to python
+Copyright 2019 Louis Zuckerman
+upstream project is https://github.com/louiszuckerman/alfred-emoji-workflow, which was forked from https://github.com/carlosgaldino/alfred-emoji-workflow
+
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
