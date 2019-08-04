@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 import json
 import os
 import sys
@@ -5,7 +6,7 @@ import pickle
 
 _COMPARE_STAT_PROPS = {'st_size', 'st_mtime'}
 _DATA_SETS = {'custom_related', 'related', 'symbols'}
-_STATS = {data_set: os.stat(f'{data_set}.json') for data_set in _DATA_SETS}
+_STATS = {data_set: os.stat('{}.json'.format(data_set)) for data_set in _DATA_SETS}
 _DATA = dict()
 
 
@@ -31,11 +32,11 @@ def is_cache_valid(data_set):
 
 
 def load_data_set(data_set):
-    set_p = f'{data_set}.p'
+    set_p = '{}.p'.format(data_set)
     if is_cache_valid(data_set):
         _DATA[data_set] = pickle.load(open(set_p, 'rb'))
     else:
-        set_json = f'{data_set}.json'
+        set_json = '{}.json'.format(data_set)
         data = json.load(open(set_json, 'r'))
         pickle.dump(data, open(set_p, 'wb'))
         save_index(data_set)
@@ -49,12 +50,11 @@ def load_data():
 
 
 def term_matches(strings):
-    term = sys.argv[1]
     return any({term in s for s in strings})
 
 
 def render_item(k):
-    symbol = _DATA['symbols'][k].encode('utf-8')
+    symbol = _DATA['symbols'][k]
     return '<item arg="{symbol}" uid="{key}">\n\t<title>{code}</title>\n\t<subtitle>{subtitle}</subtitle>'\
            '\n\t<icon>{icon}</icon>\n</item>'.format(
             key=k,
@@ -65,9 +65,14 @@ def render_item(k):
             )
 
 
+if len(sys.argv) < 2:
+    exit(0)
+term = sys.argv[1]
+if not term:
+    exit(0)
 load_data()
 matches = {key for key, values in _DATA['related'].items() if term_matches(values)}
 matches = list(matches.union({key for key, values in _DATA['custom_related'].items() if term_matches(values)}))
 matches.sort(key=lambda item: (item.count('_'), item))
-items = str.join("\n", map(render_item, matches))
-print("<?xml version='1.0'?>\n<items>\n{items}\n</items>".format(items=items))
+items = "\n".join(map(render_item, matches))
+print("<?xml version='1.0'?>\n<items>\n{items}\n</items>".format(items=items).encode('utf-8'))
