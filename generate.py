@@ -4,20 +4,21 @@ import json
 
 
 def list_annotations(emoji):
-    def not_tts(type):
-        return not type == 'tts'
+    def not_tts(typ):
+        return not typ == 'tts'
 
-    found = annotations.find_all('annotation', cp=emoji, type=not_tts)
-    if len(found) < 1:
-        return []
-
-    return found[0].string.split(' | ')
+    terms = set()
+    for anns in {annotations, annotations1}:
+        fnd = anns.find_all('annotation', cp=emoji, type=not_tts)
+        if len(fnd) > 0:
+            terms = terms.union(fnd[0].string.split(' | '))
+    return list(terms)
 
 
 def write_icon(emoji_name, icon_png):
-    f = open(f'images/emoji/{emoji_name}.png', 'wb')
-    f.write(icon_png)
-    f.close()
+    fi = open(f'images/emoji/{emoji_name}.png', 'wb')
+    fi.write(icon_png)
+    fi.close()
 
 
 def export_emoji(table_row):
@@ -32,33 +33,31 @@ def export_emoji(table_row):
 
     emoji_name = table_row.find_all('td', class_='name')[0].string.replace(' ', '_')
 
-    maybe_custom = custom_annotations[emoji_name] if emoji_name in custom_annotations else []
-    annotation_list = list(set().union(annotation_list, maybe_custom))
+    # icon_png = b64decode(apple_icon['src'][22:])
 
-    icon_png = b64decode(apple_icon['src'][22:])
-
-    write_icon(emoji_name, icon_png)
+    # write_icon(emoji_name, icon_png)
     symbols[emoji_name] = emoji
     related[emoji_name] = annotation_list
 
 
 def get_annotations():
-    # wget -O annotations-en.xml https://unicode.org/repos/cldr/tags/latest/common/annotations/en.xml
+    # wget -O annotations-en.xml https://github.com/unicode-org/cldr/raw/master/common/annotations/en.xml
     # 2019-02-09
     with open('annotations-en.xml') as fp:
         soup = BeautifulSoup(fp, features="lxml")
         return soup
 
 
-def get_custom_annotations():
-    with open('custom_related.json') as fp:
-        custom = json.load(fp)
-
-    return custom
+def get_annotations1():
+    # wget -O annotations-en1.xml https://github.com/unicode-org/cldr/raw/master/common/annotations/en_001.xml
+    # 2019-02-09
+    with open('annotations-en1.xml') as fp:
+        soup = BeautifulSoup(fp, features="lxml")
+        return soup
 
 
 annotations = get_annotations()
-custom_annotations = get_custom_annotations()
+annotations1 = get_annotations1()
 symbols = {}
 related = {}
 
