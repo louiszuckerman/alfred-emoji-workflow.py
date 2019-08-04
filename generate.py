@@ -33,9 +33,9 @@ def export_emoji(table_row):
 
     emoji_name = table_row.find_all('td', class_='name')[0].string.replace(' ', '_')
 
-    # icon_png = b64decode(apple_icon['src'][22:])
+    icon_png = b64decode(apple_icon['src'][22:])
 
-    # write_icon(emoji_name, icon_png)
+    write_icon(emoji_name, icon_png)
     symbols[emoji_name] = emoji
     related[emoji_name] = annotation_list
 
